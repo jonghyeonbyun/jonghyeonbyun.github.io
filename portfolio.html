@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>변종현 — 에너지시스템공학부</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@300;400;500&family=Noto+Sans+KR:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --black: #0a0a0a;
+      --white: #fafafa;
+      --gray-100: #f0f0f0;
+      --gray-300: #c8c8c8;
+      --gray-500: #888;
+      --gray-700: #444;
+      --blue: #1d6eea;
+      --blue-light: #e8f0fd;
+      --blue-mid: #4d8ef0;
+      --accent: #1d6eea;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--white);
+      color: var(--black);
+      font-family: 'DM Mono', 'Noto Sans KR', monospace;
+      font-size: 14px;
+      line-height: 1.6;
+      cursor: none;
+    }
+
+    .cursor {
+      position: fixed;
+      width: 8px; height: 8px;
+      background: var(--blue);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9999;
+      transform: translate(-50%, -50%);
+      transition: transform 0.1s, width 0.2s, height 0.2s;
+    }
+    .cursor-ring {
+      position: fixed;
+      width: 32px; height: 32px;
+      border: 1px solid var(--blue);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9998;
+      transform: translate(-50%, -50%);
+      transition: transform 0.15s ease, width 0.3s, height 0.3s, opacity 0.3s;
+      opacity: 0.4;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 24px 48px;
+      background: rgba(250,250,250,0.92);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--gray-100);
+    }
+    .nav-logo {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--gray-500);
+    }
+    .nav-links { display: flex; gap: 36px; }
+    .nav-links a {
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      text-decoration: none;
+      color: var(--gray-700);
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--blue); }
+
+    /* ── HERO ── */
+    .hero {
+      min-height: 100vh;
+      display: flex; align-items: flex-end;
+      padding: 0 48px 80px;
+      border-bottom: 1px solid var(--gray-100);
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-bg-text {
+      position: absolute;
+      top: 50%; left: 48px;
+      transform: translateY(-60%);
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(80px, 15vw, 220px);
+      color: var(--gray-100);
+      line-height: 0.9;
+      pointer-events: none;
+      user-select: none;
+      letter-spacing: -0.03em;
+    }
+    .hero-content { position: relative; z-index: 2; max-width: 700px; }
+    .hero-label {
+      font-size: 11px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--gray-500);
+      margin-bottom: 20px;
+      display: flex; align-items: center; gap: 12px;
+    }
+    .hero-label::before {
+      content: '';
+      display: block; width: 32px; height: 1px;
+      background: var(--blue-mid);
+    }
+    .hero-name {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(36px, 6vw, 72px);
+      line-height: 1.05;
+      letter-spacing: -0.02em;
+      margin-bottom: 24px;
+    }
+    .hero-name em {
+      font-style: italic;
+      color: var(--blue-mid);
+    }
+    .hero-desc {
+      font-size: 13px;
+      color: var(--gray-700);
+      line-height: 1.8;
+      max-width: 480px;
+      margin-bottom: 40px;
+      font-weight: 300;
+    }
+    .hero-meta {
+      display: flex; gap: 32px;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      color: var(--gray-500);
+      text-transform: uppercase;
+    }
+    .hero-meta span { display: flex; flex-direction: column; gap: 4px; }
+    .hero-meta strong { color: var(--black); font-weight: 500; letter-spacing: 0; text-transform: none; font-size: 14px; }
+
+    /* ── SECTION HEADER ── */
+    .section-header {
+      display: flex; justify-content: space-between; align-items: baseline;
+      padding: 64px 48px 40px;
+      border-bottom: 1px solid var(--gray-100);
+    }
+    .section-num {
+      font-size: 11px; letter-spacing: 0.15em;
+      color: var(--gray-300); text-transform: uppercase;
+    }
+    .section-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(28px, 4vw, 48px);
+      letter-spacing: -0.02em;
+    }
+
+    /* ── PROJECTS GRID ── */
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .project-card {
+      padding: 48px;
+      border-bottom: 1px solid var(--gray-100);
+      border-right: 1px solid var(--gray-100);
+      transition: background 0.2s;
+      cursor: none;
+      position: relative;
+      overflow: hidden;
+    }
+    .project-card:nth-child(2n) { border-right: none; }
+    .project-card::after {
+      content: '→';
+      position: absolute;
+      bottom: 48px; right: 48px;
+      font-size: 18px;
+      opacity: 0;
+      transform: translate(-8px, 4px);
+      transition: opacity 0.25s, transform 0.25s;
+    }
+    .project-card:hover { background: var(--blue-light); }
+    .project-card:hover::after { opacity: 1; transform: translate(0, 0); color: var(--blue); }
+
+    .project-tag {
+      font-size: 10px; letter-spacing: 0.15em;
+      text-transform: uppercase; color: var(--blue);
+      margin-bottom: 20px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .project-tag::before {
+      content: '';
+      width: 20px; height: 1px;
+      background: var(--blue-mid);
+    }
+    .project-year {
+      font-size: 10px; letter-spacing: 0.12em;
+      color: var(--gray-300); text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+    .project-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(20px, 2.5vw, 28px);
+      letter-spacing: -0.01em;
+      line-height: 1.2;
+      margin-bottom: 16px;
+    }
+    .project-desc {
+      font-size: 12px;
+      color: var(--gray-500);
+      line-height: 1.8;
+      font-weight: 300;
+      max-width: 360px;
+      margin-bottom: 32px;
+    }
+    .project-tags {
+      display: flex; flex-wrap: wrap; gap: 8px;
+    }
+    .tag {
+      font-size: 10px; letter-spacing: 0.1em;
+      text-transform: uppercase;
+      border: 1px solid var(--blue-mid);
+      padding: 4px 10px;
+      color: var(--blue);
+    }
+
+    /* ── SKILLS ── */
+    .skills-section { padding: 64px 48px; border-bottom: 1px solid var(--gray-100); }
+    .skills-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1px;
+      background: var(--gray-100);
+      border: 1px solid var(--gray-100);
+      margin-top: 48px;
+    }
+    .skill-group {
+      background: var(--white);
+      padding: 32px;
+    }
+    .skill-group-label {
+      font-size: 10px; letter-spacing: 0.15em;
+      text-transform: uppercase; color: var(--gray-300);
+      margin-bottom: 20px;
+    }
+    .skill-list { list-style: none; }
+    .skill-list li {
+      font-size: 13px; color: var(--gray-700);
+      padding: 6px 0;
+      border-bottom: 1px solid var(--gray-100);
+      font-weight: 300;
+    }
+    .skill-list li:last-child { border-bottom: none; }
+
+    /* ── ABOUT ── */
+    .about-section {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      border-bottom: 1px solid var(--gray-100);
+    }
+    .about-left {
+      padding: 64px 48px;
+      border-right: 1px solid var(--gray-100);
+    }
+    .about-right { padding: 64px 48px; }
+    .about-heading {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(24px, 3vw, 36px);
+      letter-spacing: -0.02em;
+      line-height: 1.3;
+      margin-bottom: 32px;
+    }
+    .about-heading em { font-style: italic; color: var(--blue-mid); }
+    .about-text {
+      font-size: 13px; color: var(--gray-700);
+      line-height: 1.9; font-weight: 300;
+      margin-bottom: 16px;
+    }
+    .timeline { margin-top: 8px; }
+    .timeline-item {
+      display: grid;
+      grid-template-columns: 80px 1fr;
+      gap: 24px;
+      padding: 20px 0;
+      border-bottom: 1px solid var(--gray-100);
+    }
+    .timeline-item:last-child { border-bottom: none; }
+    .timeline-year { font-size: 11px; color: var(--gray-300); padding-top: 2px; }
+    .timeline-content-title { font-size: 13px; font-weight: 500; margin-bottom: 4px; }
+    .timeline-content-desc { font-size: 12px; color: var(--gray-500); font-weight: 300; }
+
+    /* ── CONTACT ── */
+    .contact-section {
+      padding: 80px 48px;
+      display: flex; justify-content: space-between; align-items: flex-end;
+    }
+    .contact-left {}
+    .contact-label {
+      font-size: 11px; letter-spacing: 0.15em;
+      text-transform: uppercase; color: var(--gray-300);
+      margin-bottom: 16px;
+    }
+    .contact-heading {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(32px, 5vw, 64px);
+      letter-spacing: -0.02em;
+      line-height: 1.05;
+    }
+    .contact-heading em { font-style: italic; color: var(--blue-mid); }
+    .contact-links {
+      display: flex; flex-direction: column; gap: 16px;
+      text-align: right;
+    }
+    .contact-link {
+      font-size: 12px; letter-spacing: 0.1em;
+      text-transform: uppercase; text-decoration: none;
+      color: var(--gray-700);
+      transition: color 0.2s;
+      display: flex; align-items: center; gap: 8px; justify-content: flex-end;
+    }
+    .contact-link:hover { color: var(--blue); }
+    .contact-link::after { content: '↗'; font-size: 10px; }
+
+    /* ── FOOTER ── */
+    footer {
+      padding: 24px 48px;
+      border-top: 1px solid var(--gray-100);
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .footer-copy { font-size: 11px; color: var(--gray-300); letter-spacing: 0.08em; }
+
+    /* ── ANIMATIONS ── */
+    .fade-in {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+    .fade-in.visible { opacity: 1; transform: translateY(0); }
+
+    @media (max-width: 768px) {
+      nav { padding: 20px 24px; }
+      .hero { padding: 0 24px 60px; }
+      .projects-grid { grid-template-columns: 1fr; }
+      .project-card { border-right: none; }
+      .skills-grid { grid-template-columns: repeat(2, 1fr); }
+      .about-section { grid-template-columns: 1fr; }
+      .about-left { border-right: none; border-bottom: 1px solid var(--gray-100); }
+      .section-header, .skills-section, .contact-section { padding: 48px 24px; }
+      .about-left, .about-right { padding: 48px 24px; }
+      .project-card { padding: 32px 24px; }
+      .contact-section { flex-direction: column; align-items: flex-start; gap: 40px; }
+      .contact-links { text-align: left; }
+      .contact-link { justify-content: flex-start; }
+      footer { padding: 20px 24px; }
+      .hero-bg-text { font-size: 80px; }
+      body { cursor: auto; }
+      .cursor, .cursor-ring { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="cursor" id="cursor"></div>
+  <div class="cursor-ring" id="cursorRing"></div>
+
+  <!-- NAV -->
+  <nav>
+    <div class="nav-logo">JH Byun Portfolio</div>
+    <div class="nav-links">
+      <a href="#projects">Projects</a>
+      <a href="#skills">Skills</a>
+      <a href="#about">About</a>
+      <a href="#contact">Contact</a>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-bg-text">Energy</div>
+    <div class="hero-content">
+      <div class="hero-label">에너지시스템공학부</div>
+      <h1 class="hero-name">
+        변종현<br /><em>Engineering Projects</em>
+      </h1>
+      <p class="hero-desc">
+        에너지 변환, 저장, 효율 최적화를 탐구하는<br />
+        에너지시스템공학부 학생의 프로젝트 모음입니다.<br />
+        지속 가능한 에너지 시스템 설계에 관심이 있습니다.
+      </p>
+      <div class="hero-meta">
+        <span>학교<strong>중앙대학교</strong></span>
+        <span>학년<strong>1학년</strong></span>
+        <span>전공<strong>에너지시스템공학</strong></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROJECTS -->
+  <div class="section-header fade-in" id="projects">
+    <span class="section-num">01 — Projects</span>
+    <h2 class="section-title">주요 프로젝트</h2>
+  </div>
+
+  <div class="projects-grid">
+    <div class="project-card fade-in">
+      <div class="project-tag">열역학</div>
+      <div class="project-year">2024</div>
+      <h3 class="project-title">태양광-ESS 하이브리드<br />에너지 최적화 시스템</h3>
+      <p class="project-desc">
+        태양광 발전과 에너지 저장 장치를 연계한 하이브리드 시스템의
+        출력 최적화 알고리즘을 개발하고 시뮬레이션을 통해 검증했습니다.
+      </p>
+      <div class="project-tags">
+        <span class="tag">MATLAB</span>
+        <span class="tag">최적화</span>
+        <span class="tag">태양광</span>
+      </div>
+    </div>
+
+    <div class="project-card fade-in">
+      <div class="project-tag">유체역학</div>
+      <div class="project-year">2024</div>
+      <h3 class="project-title">풍력 터빈 블레이드<br />CFD 해석 및 설계</h3>
+      <p class="project-desc">
+        NACA 에어포일 기반 풍력 터빈 블레이드의 유동 해석을 수행하고,
+        효율 개선을 위한 형상 최적화 방향을 도출했습니다.
+      </p>
+      <div class="project-tags">
+        <span class="tag">ANSYS</span>
+        <span class="tag">CFD</span>
+        <span class="tag">풍력</span>
+      </div>
+    </div>
+
+    <div class="project-card fade-in">
+      <div class="project-tag">전기화학</div>
+      <div class="project-year">2023</div>
+      <h3 class="project-title">리튬이온 배터리<br />SOC 추정 알고리즘</h3>
+      <p class="project-desc">
+        확장 칼만 필터를 이용한 배터리 잔존 용량 추정 알고리즘을
+        구현하고 실험 데이터로 정확도를 평가했습니다.
+      </p>
+      <div class="project-tags">
+        <span class="tag">Python</span>
+        <span class="tag">EKF</span>
+        <span class="tag">배터리</span>
+      </div>
+    </div>
+
+    <div class="project-card fade-in">
+      <div class="project-tag">열전달</div>
+      <div class="project-year">2023</div>
+      <h3 class="project-title">건물 에너지 소비<br />시뮬레이션 및 분석</h3>
+      <p class="project-desc">
+        EnergyPlus를 활용해 단열 성능과 창호 비율에 따른
+        건물 냉난방 에너지 소비량 변화를 정량적으로 분석했습니다.
+      </p>
+      <div class="project-tags">
+        <span class="tag">EnergyPlus</span>
+        <span class="tag">건물에너지</span>
+        <span class="tag">시뮬레이션</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- SKILLS -->
+  <div class="section-header fade-in" id="skills">
+    <span class="section-num">02 — Skills</span>
+    <h2 class="section-title">기술 스택</h2>
+  </div>
+  <div class="skills-section">
+    <div class="skills-grid">
+      <div class="skill-group fade-in">
+        <div class="skill-group-label">Simulation</div>
+        <ul class="skill-list">
+          <li>MATLAB / Simulink</li>
+          <li>ANSYS Fluent</li>
+          <li>EnergyPlus</li>
+          <li>OpenFOAM</li>
+        </ul>
+      </div>
+      <div class="skill-group fade-in">
+        <div class="skill-group-label">Programming</div>
+        <ul class="skill-list">
+          <li>Python</li>
+          <li>C / C++</li>
+          <li>R</li>
+          <li>LaTeX</li>
+        </ul>
+      </div>
+      <div class="skill-group fade-in">
+        <div class="skill-group-label">Engineering</div>
+        <ul class="skill-list">
+          <li>열역학 해석</li>
+          <li>유체역학 해석</li>
+          <li>전기화학 분석</li>
+          <li>시스템 최적화</li>
+        </ul>
+      </div>
+      <div class="skill-group fade-in">
+        <div class="skill-group-label">Tools</div>
+        <ul class="skill-list">
+          <li>AutoCAD</li>
+          <li>SolidWorks</li>
+          <li>Excel / Origin</li>
+          <li>Git</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ABOUT -->
+  <div class="section-header fade-in" id="about">
+    <span class="section-num">03 — About</span>
+    <h2 class="section-title">소개</h2>
+  </div>
+  <div class="about-section">
+    <div class="about-left fade-in">
+      <h3 class="about-heading">지속 가능한 에너지의<br /><em>미래를 설계합니다</em></h3>
+      <p class="about-text">
+        에너지시스템공학부에서 열역학, 유체역학, 전기화학을 바탕으로
+        실제 에너지 문제를 해결하는 방법을 공부하고 있습니다.
+      </p>
+      <p class="about-text">
+        재생에너지 시스템 최적화와 에너지 저장 기술에 특히 관심을 가지고 있으며,
+        시뮬레이션과 데이터 분석을 통해 공학적 문제를 접근합니다.
+      </p>
+    </div>
+    <div class="about-right fade-in">
+      <div class="timeline">
+        <div class="timeline-item">
+          <span class="timeline-year">2025</span>
+          <div>
+            <div class="timeline-content-title">중앙대학교 에너지시스템공학부 입학</div>
+            <div class="timeline-content-desc">공과대학 신입생</div>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <span class="timeline-year">2025</span>
+          <div>
+            <div class="timeline-content-title">공학설계입문 프로젝트</div>
+            <div class="timeline-content-desc">팀 프로젝트 — 에너지 효율 아이디어 설계</div>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <span class="timeline-year">2025</span>
+          <div>
+            <div class="timeline-content-title">전공 기초 학습</div>
+            <div class="timeline-content-desc">열역학, 공학수학, 일반화학 수강</div>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <span class="timeline-year">2024</span>
+          <div>
+            <div class="timeline-content-title">대학 수학능력시험</div>
+            <div class="timeline-content-desc">중앙대학교 에너지시스템공학부 진학</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONTACT -->
+  <div class="section-header fade-in" id="contact">
+    <span class="section-num">04 — Contact</span>
+    <h2 class="section-title">연락하기</h2>
+  </div>
+  <div class="contact-section">
+    <div class="contact-left fade-in">
+      <div class="contact-label">Get in touch</div>
+      <h2 class="contact-heading">함께<br />만들어가요<br /><em>새로운 에너지</em></h2>
+    </div>
+    <div class="contact-links fade-in">
+      <a href="mailto:225whdgus@gmail.com" class="contact-link">225whdgus@gmail.com</a>
+      <a href="#" class="contact-link">GitHub</a>
+      <a href="#" class="contact-link">LinkedIn</a>
+      <a href="#" class="contact-link">Research Gate</a>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <span class="footer-copy">© 2025 변종현 — 에너지시스템공학부</span>
+    <span class="footer-copy">Chung-Ang University</span>
+  </footer>
+
+  <script>
+    // Custom cursor
+    const cursor = document.getElementById('cursor');
+    const ring = document.getElementById('cursorRing');
+    let mx = 0, my = 0, rx = 0, ry = 0;
+    document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+    const animateCursor = () => {
+      cursor.style.left = mx + 'px'; cursor.style.top = my + 'px';
+      rx += (mx - rx) * 0.12; ry += (my - ry) * 0.12;
+      ring.style.left = rx + 'px'; ring.style.top = ry + 'px';
+      requestAnimationFrame(animateCursor);
+    };
+    animateCursor();
+
+    // Fade-in on scroll
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((e, i) => {
+        if (e.isIntersecting) {
+          setTimeout(() => e.target.classList.add('visible'), i * 80);
+        }
+      });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+  </script>
+</body>
+</html>
